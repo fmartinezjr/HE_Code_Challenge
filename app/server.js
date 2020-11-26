@@ -6,7 +6,7 @@ const PORT = "8080";
 app.use("/", pullRequestRouter);
 
 app.listen(PORT, () => {
-    console.log(`App running on port ${PORT}.`);
-  });
-  
+  console.log(`App running on port ${PORT}.`);
+});
+
 module.exports = app;

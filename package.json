@@ -4,7 +4,7 @@
   "description": "he code challenge!",
   "main": "server.js",
   "scripts": {
-    "format": "yarn prettier",
+    "format": "prettier --write \"app/**/*.js*\"",
     "start": "cd app && node server.js"
   },
   "repository": "https://github.com/martinezfran63/HE_Code_Challenge.git",
