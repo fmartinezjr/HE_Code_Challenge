@@ -2,7 +2,11 @@
   "name": "he_code_challenge",
   "version": "1.0.0",
   "description": "he code challenge!",
-  "main": "index.js",
+  "main": "server.js",
+  "scripts": {
+    "format": "yarn prettier",
+    "start": "node server.js"
+  },
   "repository": "https://github.com/martinezfran63/HE_Code_Challenge.git",
   "author": "martinezfran63 <martinezfran63@gmail.com>",
   "license": "MIT",
