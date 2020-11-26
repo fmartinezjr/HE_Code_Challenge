@@ -1,0 +1,14 @@
+{
+  "name": "he_code_challenge",
+  "version": "1.0.0",
+  "description": "he code challenge!",
+  "main": "index.js",
+  "repository": "https://github.com/martinezfran63/HE_Code_Challenge.git",
+  "author": "martinezfran63 <martinezfran63@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "prettier": "^2.2.0"
+  }
+}
