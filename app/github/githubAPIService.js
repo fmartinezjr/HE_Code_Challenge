@@ -10,13 +10,34 @@ module.exports = class githubAPIService {
     });
   }
 
+  //returns the number of properties on each object
+  getTotalCommentsOnEachPr(response) {
+    return response.map(function (response) {
+      return Object.keys(response.data).length;
+    });
+  }
+
+  getCommentsURL(array, key) {
+    return array.map(function (item) {
+      return item[key];
+    });
+  }
+
   async returnPRInfo() {
     try {
       let getPullRequestInfo = await this.getPullRequestInfo();
 
       let prTitle = this.getTitle(getPullRequestInfo, "title");
+      let commentsUrl = this.getCommentsURL(getPullRequestInfo, "comments_url");
 
-      return getPullRequestInfo;
+      /*       getPullRequestComments = await this.getPullRequestComments(
+        commentsUrl
+      ); */
+
+      return {
+        title: prTitle,
+        url: commentsUrl,
+      };
     } catch (error) {
       console.error(error);
     }
@@ -25,15 +46,33 @@ module.exports = class githubAPIService {
   async getPullRequestInfo() {
     try {
       const response = await axios.get(
-        "https://api.github.com/repos/martinezfran63/ElRinconcitoDelSabor/pulls?state=open ",
+        "https://api.github.com/repos/martinezfran63/ElRinconcitoDelSabor/pulls?state=open",
         {
-          //const response = await axios.get("https://codepen.io/jobs.json", {
           headers: {
             Authorization: "token 4811b9a6d7b6ce5c6d8541192ae0e72b7f0f47eb",
           },
         }
       );
       return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async getPullRequestComments(url) {
+    console.log(`\n\n ${url}`);
+    try {
+      let returnedComments = await axios.all(url, {
+        headers: {
+          Authorization: "token 4811b9a6d7b6ce5c6d8541192ae0e72b7f0f47eb",
+        },
+      });
+      console.log(`\n\n\n`);
+      console.log(
+        `this is what we got back hmmm${JSON.stringify(returnedComments)}`
+      );
+      return returnedComments;
+      //return this.getTotalCommentsOnEachPr(response)
     } catch (error) {
       console.error(error);
     }

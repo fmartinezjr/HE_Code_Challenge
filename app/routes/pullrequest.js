@@ -7,7 +7,7 @@ router.get("/pr", async (req, res, next) => {
   try {
     const github = new githubAPIService({});
     res.locals.prInfo = await github.returnPRInfo();
-    res.json({ title: res.locals.prInfo });
+    res.json(res.locals.prInfo);
   } catch (error) {
     return next(error);
   }
