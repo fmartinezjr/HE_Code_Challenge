@@ -23,6 +23,12 @@ module.exports = class githubAPIService {
     });
   }
 
+  getUserInformation(array, key) {
+    return array.map(function (item) {
+      return item["user"][key];
+    });
+  }
+
   async returnPRInfo() {
     try {
       let getPullRequestInfo = await this.getPullRequestInfo();
@@ -37,12 +43,19 @@ module.exports = class githubAPIService {
         "commits_url"
       );
 
+      let user = this.getUserInformation(
+        getPullRequestInfo,
+        "login"
+      );
+
+      
       /*       getPullRequestComments = await this.getPullRequestComments(
         commentsUrl
       ); */
 
       return {
         title: prTitle,
+        user: user,
         url: commentsUrl,
         commits: commits,
       };
