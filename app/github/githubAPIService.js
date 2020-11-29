@@ -17,7 +17,7 @@ module.exports = class githubAPIService {
     });
   }
 
-  getCommentsURL(array, key) {
+  getPropertyInformation(array, key) {
     return array.map(function (item) {
       return item[key];
     });
@@ -28,7 +28,14 @@ module.exports = class githubAPIService {
       let getPullRequestInfo = await this.getPullRequestInfo();
 
       let prTitle = this.getTitle(getPullRequestInfo, "title");
-      let commentsUrl = this.getCommentsURL(getPullRequestInfo, "comments_url");
+      let commentsUrl = this.getPropertyInformation(
+        getPullRequestInfo,
+        "comments_url"
+      );
+      let commits = this.getPropertyInformation(
+        getPullRequestInfo,
+        "commits_url"
+      );
 
       /*       getPullRequestComments = await this.getPullRequestComments(
         commentsUrl
@@ -37,6 +44,7 @@ module.exports = class githubAPIService {
       return {
         title: prTitle,
         url: commentsUrl,
+        commits: commits,
       };
     } catch (error) {
       console.error(error);
