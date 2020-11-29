@@ -1,6 +1,12 @@
 const axios = require("axios");
+axios.defaults.headers.common[
+  "Authorization"
+] = `token fdaf916621c5321341119cceec3e97617651bbce`;
 module.exports = class githubAPIService {
-  constructor() {}
+  constructor() {
+    this.url =
+      "https://api.github.com/repos/martinezfran63/ElRinconcitoDelSabor";
+  }
 
   getTitle(array, key) {
     return array.map(function (item) {
@@ -55,9 +61,9 @@ module.exports = class githubAPIService {
 
       let user = this.getUserInformation(getPullRequestInfo, "login");
 
-      /*       getPullRequestComments = await this.getPullRequestComments(
+      let getPullRequestComments = await this.getPullRequestComments(
         commentsUrl
-      ); */
+      );
 
       return this.formatResponse(prTitle, commentsUrl, commits, user);
     } catch (error) {
@@ -67,9 +73,7 @@ module.exports = class githubAPIService {
 
   async getPullRequestInfo() {
     try {
-      const response = await axios.get(
-        "https://api.github.com/repos/martinezfran63/ElRinconcitoDelSabor/pulls?state=open",
-      );
+      const response = await axios.get(`${this.url}/pulls?state=open`);
       return response.data;
     } catch (error) {
       console.error(error);
@@ -77,15 +81,13 @@ module.exports = class githubAPIService {
   }
 
   async getPullRequestComments(url) {
-    console.log(`\n\n ${url}`);
+    console.log(url);
     try {
-      let returnedComments = await axios.all(url);
-      console.log(`\n\n\n`);
-      console.log(
-        `this is what we got back hmmm${JSON.stringify(returnedComments)}`
+      axios.all(url.map((l) => axios.get(l))).then(
+        axios.spread((...res) => {
+          console.log("\n\n\n\nnew new " + res);
+        })
       );
-      return returnedComments;
-      //return this.getTotalCommentsOnEachPr(response)
     } catch (error) {
       console.error(error);
     }
