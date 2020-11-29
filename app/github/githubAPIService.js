@@ -1,6 +1,5 @@
 const { doesNotMatch } = require("assert");
 const axios = require("axios");
-var fs = require("fs");
 module.exports = class githubAPIService {
   constructor() {}
 
@@ -29,6 +28,18 @@ module.exports = class githubAPIService {
     });
   }
 
+  formatResponse(prTitle, commentsUrl, commits, user) {
+    let response = {};
+
+    prTitle.forEach((title, i) => {
+      response[title] = {};
+      response[title]["comments_url"] = commentsUrl[i];
+      response[title]["commits_url"] = commits[i];
+      response[title]["user"] = user[i];
+    });
+    return response;
+  }
+
   async returnPRInfo() {
     try {
       let getPullRequestInfo = await this.getPullRequestInfo();
@@ -43,22 +54,13 @@ module.exports = class githubAPIService {
         "commits_url"
       );
 
-      let user = this.getUserInformation(
-        getPullRequestInfo,
-        "login"
-      );
+      let user = this.getUserInformation(getPullRequestInfo, "login");
 
-      
       /*       getPullRequestComments = await this.getPullRequestComments(
         commentsUrl
       ); */
 
-      return {
-        title: prTitle,
-        user: user,
-        url: commentsUrl,
-        commits: commits,
-      };
+      return this.formatResponse(prTitle, commentsUrl, commits, user);
     } catch (error) {
       console.error(error);
     }
