@@ -1,4 +1,3 @@
-const { doesNotMatch } = require("assert");
 const axios = require("axios");
 module.exports = class githubAPIService {
   constructor() {}
@@ -70,11 +69,6 @@ module.exports = class githubAPIService {
     try {
       const response = await axios.get(
         "https://api.github.com/repos/martinezfran63/ElRinconcitoDelSabor/pulls?state=open",
-        {
-          headers: {
-            Authorization: "token 4811b9a6d7b6ce5c6d8541192ae0e72b7f0f47eb",
-          },
-        }
       );
       return response.data;
     } catch (error) {
@@ -85,11 +79,7 @@ module.exports = class githubAPIService {
   async getPullRequestComments(url) {
     console.log(`\n\n ${url}`);
     try {
-      let returnedComments = await axios.all(url, {
-        headers: {
-          Authorization: "token 4811b9a6d7b6ce5c6d8541192ae0e72b7f0f47eb",
-        },
-      });
+      let returnedComments = await axios.all(url);
       console.log(`\n\n\n`);
       console.log(
         `this is what we got back hmmm${JSON.stringify(returnedComments)}`
