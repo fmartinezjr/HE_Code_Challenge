@@ -1,9 +1,7 @@
 const axios = require("axios");
-
 module.exports = class githubAPIService {
-  constructor() {
-    this.url =
-      "https://api.github.com/repos/martinezfran63/ElRinconcitoDelSabor";
+  constructor(req) {
+    this.url = req.url;
   }
 
   getTitle(array, key) {
@@ -55,7 +53,6 @@ module.exports = class githubAPIService {
   async returnPRInfo() {
     try {
       let getPullRequestInfo = await this.getPullRequestInfo();
-
       let prTitle = this.getTitle(getPullRequestInfo, "title");
       let commentsUrl = this.getPropertyInformation(
         getPullRequestInfo,
@@ -73,7 +70,7 @@ module.exports = class githubAPIService {
       );
 
       let getPullRequestCommmits = await this.getPullRequestCommmits(commits);
- 
+
       return this.formatResponse(
         prTitle,
         commentsUrl,
@@ -107,7 +104,6 @@ module.exports = class githubAPIService {
       );
 
       return response.map(this.getTotalOfNestedObjects);
-
     } catch (error) {
       console.error(error);
     }
@@ -135,7 +131,6 @@ module.exports = class githubAPIService {
       );
 
       return response.map(this.getTotalOfNestedObjects);
-
     } catch (error) {
       console.error(error);
     }

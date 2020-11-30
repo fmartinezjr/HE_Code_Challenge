@@ -1,6 +1,9 @@
 let express = require("express");
-var pullRequestRouter = require("./routes/pullrequest");
+const bodyParser = require('body-parser');
 const app = express();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+const pullRequestRouter = require("./routes/pullrequest");
 const PORT = "8080";
 
 app.use("/", pullRequestRouter);
