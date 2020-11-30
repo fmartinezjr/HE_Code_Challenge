@@ -1,9 +1,17 @@
 const axios = require("axios");
+axios.defaults.headers.common["Authorization"] =
+  "fdaf916621c5321341119cceec3e97617651bbce";
+
 module.exports = class githubAPIService {
   constructor(req) {
-    this.url = req.url;
+    this.url = this.getRepoURL(req.url);
   }
 
+  getRepoURL(url) {
+    let repo = url.substring(url.lastIndexOf("/repos") + 1);
+
+    return `https://api.github.com/${repo}`;
+  }
   getTitle(array, key) {
     return array.map(function (item) {
       return item[key];
