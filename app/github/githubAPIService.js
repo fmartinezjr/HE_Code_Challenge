@@ -1,7 +1,15 @@
 const axios = require("axios");
-module.exports = class githubAPIService {
-  constructor() {}
 
+module.exports = class githubAPIService {
+  constructor(req) {
+    this.url = this.getRepoURL(req.url);
+  }
+
+  getRepoURL(bodyURL) {
+    const url = new URL(bodyURL);
+
+    return `https://api.github.com/repos${url.pathname}`;
+  }
   getTitle(array, key) {
     return array.map(function (item) {
       return item[key];
@@ -27,14 +35,23 @@ module.exports = class githubAPIService {
     });
   }
 
-  formatResponse(prTitle, commentsUrl, commits, user) {
+  formatResponse(
+    prTitle,
+    commentsUrl,
+    commits,
+    user,
+    numOfComment,
+    numOfCommit
+  ) {
     let response = {};
 
     prTitle.forEach((title, i) => {
       response[title] = {};
-      response[title]["comments_url"] = commentsUrl[i];
-      response[title]["commits_url"] = commits[i];
       response[title]["user"] = user[i];
+      response[title]["comments_url"] = commentsUrl[i];
+      response[title]["number_of_comments"] = numOfComment[i];
+      response[title]["commits_url"] = commits[i];
+      response[title]["number_of_commit"] = numOfCommit[i];
     });
     return response;
   }
@@ -42,7 +59,6 @@ module.exports = class githubAPIService {
   async returnPRInfo() {
     try {
       let getPullRequestInfo = await this.getPullRequestInfo();
-
       let prTitle = this.getTitle(getPullRequestInfo, "title");
       let commentsUrl = this.getPropertyInformation(
         getPullRequestInfo,
@@ -55,37 +71,72 @@ module.exports = class githubAPIService {
 
       let user = this.getUserInformation(getPullRequestInfo, "login");
 
-      /*       getPullRequestComments = await this.getPullRequestComments(
+      let getPullRequestComments = await this.getPullRequestComments(
         commentsUrl
-      ); */
+      );
 
-      return this.formatResponse(prTitle, commentsUrl, commits, user);
+      let getPullRequestCommmits = await this.getPullRequestCommmits(commits);
+
+      return this.formatResponse(
+        prTitle,
+        commentsUrl,
+        commits,
+        user,
+        getPullRequestComments,
+        getPullRequestCommmits
+      );
     } catch (error) {
       console.error(error);
     }
   }
 
+  //api calls gives us comments_url and commits_url
   async getPullRequestInfo() {
     try {
-      const response = await axios.get(
-        "https://api.github.com/repos/martinezfran63/ElRinconcitoDelSabor/pulls?state=open",
-      );
+      const response = await axios.get(`${this.url}/pulls?state=open`);
       return response.data;
     } catch (error) {
       console.error(error);
     }
   }
 
+  //api call to get the pull request comments. returns the total number of comments per pull request
   async getPullRequestComments(url) {
-    console.log(`\n\n ${url}`);
     try {
-      let returnedComments = await axios.all(url);
-      console.log(`\n\n\n`);
-      console.log(
-        `this is what we got back hmmm${JSON.stringify(returnedComments)}`
+      const response = await axios.all(url.map((l) => axios.get(l))).then(
+        axios.spread((...res) => {
+          return res;
+        })
       );
-      return returnedComments;
-      //return this.getTotalCommentsOnEachPr(response)
+
+      return response.map(this.getTotalOfNestedObjects);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  //the number of nested objects tells us how many commits or comments there were
+  getTotalOfNestedObjects = (array) => {
+    let numNestedObjects = 0;
+    if (typeof array.data === "undefined") {
+      return numNestedObjects;
+    } else {
+      numNestedObjects = array.data.length;
+
+      return numNestedObjects;
+    }
+  };
+
+  //api call to get the pull request commits. returns the total number of commits per pull request
+  async getPullRequestCommmits(url) {
+    try {
+      const response = await axios.all(url.map((l) => axios.get(l))).then(
+        axios.spread((...res) => {
+          return res;
+        })
+      );
+
+      return response.map(this.getTotalOfNestedObjects);
     } catch (error) {
       console.error(error);
     }

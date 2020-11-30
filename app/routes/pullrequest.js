@@ -1,13 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const githubAPIService = require("../github/githubAPIService.js");
-require("dotenv").config();
 
-router.get("/pr", async (req, res, next) => {
+router.post("/pr", async (req, res, next) => {
   try {
-    const github = new githubAPIService({});
-    res.locals.prInfo = await github.returnPRInfo();
-    res.json(res.locals.prInfo);
+    const github = new githubAPIService(req.body);
+    const response = await github.returnPRInfo();
+    res.json(response);
   } catch (error) {
     return next(error);
   }

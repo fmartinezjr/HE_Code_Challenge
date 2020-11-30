@@ -5,13 +5,14 @@
   "main": "server.js",
   "scripts": {
     "format": "prettier --write \"app/**/*.js*\"",
-    "start": "cd app && node server.js"
+    "start": "cd app && set NODE_ENV=dev && node server.js"
   },
   "repository": "https://github.com/martinezfran63/HE_Code_Challenge.git",
   "author": "martinezfran63 <martinezfran63@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "axios": "^0.21.0",
+    "body-parser": "^1.19.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "prettier": "^2.2.0"
