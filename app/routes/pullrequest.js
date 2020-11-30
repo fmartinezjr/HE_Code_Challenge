@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const githubAPIService = require("../github/githubAPIService.js");
-require("dotenv").config();
 
 router.get("/pr", async (req, res, next) => {
   try {

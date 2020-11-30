@@ -1,7 +1,7 @@
 const axios = require("axios");
 axios.defaults.headers.common[
   "Authorization"
-] = `token fdaf916621c5321341119cceec3e97617651bbce`;
+] = `token `;
 module.exports = class githubAPIService {
   constructor() {
     this.url =
@@ -33,14 +33,23 @@ module.exports = class githubAPIService {
     });
   }
 
-  formatResponse(prTitle, commentsUrl, commits, user) {
+  formatResponse(
+    prTitle,
+    commentsUrl,
+    commits,
+    user,
+    numOfComment,
+    numOfCommit
+  ) {
     let response = {};
 
     prTitle.forEach((title, i) => {
       response[title] = {};
-      response[title]["comments_url"] = commentsUrl[i];
-      response[title]["commits_url"] = commits[i];
       response[title]["user"] = user[i];
+      response[title]["comments_url"] = commentsUrl[i];
+      response[title]["number_of_comments"] = numOfComment[i];
+      response[title]["commits_url"] = commits[i];
+      response[title]["number_of_commit"] = numOfCommit[i];
     });
     return response;
   }
@@ -65,7 +74,17 @@ module.exports = class githubAPIService {
         commentsUrl
       );
 
-      return this.formatResponse(prTitle, commentsUrl, commits, user);
+      console.log(getPullRequestComments)
+      let getPullRequestCommmits = await this.getPullRequestCommmits(commits);
+
+      return this.formatResponse(
+        prTitle,
+        commentsUrl,
+        commits,
+        user,
+        getPullRequestComments,
+        getPullRequestCommmits
+      );
     } catch (error) {
       console.error(error);
     }
@@ -81,13 +100,45 @@ module.exports = class githubAPIService {
   }
 
   async getPullRequestComments(url) {
-    console.log(url);
+    //console.log(url.forEach((element) => console.log("URL: " + element)));
     try {
-      axios.all(url.map((l) => axios.get(l))).then(
+      const response = await axios.all(url.map((l) => axios.get(l))).then(
         axios.spread((...res) => {
-          console.log("\n\n\n\nnew new " + res);
+          //console.log(res)
+          return res;
         })
       );
+
+      return response.map(this.checkForComments);
+
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  checkForComments = (array) => {
+    let numOfComment = 0;
+    if (typeof array.data === "undefined") {
+      return numOfComment;
+    } else {
+      numOfComment = array.data.length;
+
+      return numOfComment;
+    }
+  };
+
+  async getPullRequestCommmits(url) {
+    console.log(url.forEach((element) => console.log("URL: " + element)));
+    try {
+      const response = await axios.all(url.map((l) => axios.get(l))).then(
+        axios.spread((...res) => {
+          return res;
+        })
+      );
+
+      const num = ["1", "2", "3", "5", "6", "7"];
+
+      return num;
     } catch (error) {
       console.error(error);
     }
