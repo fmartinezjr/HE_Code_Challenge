@@ -1,7 +1,5 @@
 const axios = require("axios");
-axios.defaults.headers.common[
-  "Authorization"
-] = `token `;
+
 module.exports = class githubAPIService {
   constructor() {
     this.url =
@@ -74,9 +72,8 @@ module.exports = class githubAPIService {
         commentsUrl
       );
 
-      console.log(getPullRequestComments)
       let getPullRequestCommmits = await this.getPullRequestCommmits(commits);
-
+ 
       return this.formatResponse(
         prTitle,
         commentsUrl,
@@ -90,6 +87,7 @@ module.exports = class githubAPIService {
     }
   }
 
+  //api calls gives us comments_url and commits_url
   async getPullRequestInfo() {
     try {
       const response = await axios.get(`${this.url}/pulls?state=open`);
@@ -99,36 +97,36 @@ module.exports = class githubAPIService {
     }
   }
 
+  //api call to get the pull request comments. returns the total number of comments per pull request
   async getPullRequestComments(url) {
-    //console.log(url.forEach((element) => console.log("URL: " + element)));
     try {
       const response = await axios.all(url.map((l) => axios.get(l))).then(
         axios.spread((...res) => {
-          //console.log(res)
           return res;
         })
       );
 
-      return response.map(this.checkForComments);
+      return response.map(this.getTotalOfNestedObjects);
 
     } catch (error) {
       console.error(error);
     }
   }
 
-  checkForComments = (array) => {
-    let numOfComment = 0;
+  //the number of nested objects tells us how many commits or comments there were
+  getTotalOfNestedObjects = (array) => {
+    let numNestedObjects = 0;
     if (typeof array.data === "undefined") {
-      return numOfComment;
+      return numNestedObjects;
     } else {
-      numOfComment = array.data.length;
+      numNestedObjects = array.data.length;
 
-      return numOfComment;
+      return numNestedObjects;
     }
   };
 
+  //api call to get the pull request commits. returns the total number of commits per pull request
   async getPullRequestCommmits(url) {
-    console.log(url.forEach((element) => console.log("URL: " + element)));
     try {
       const response = await axios.all(url.map((l) => axios.get(l))).then(
         axios.spread((...res) => {
@@ -136,9 +134,8 @@ module.exports = class githubAPIService {
         })
       );
 
-      const num = ["1", "2", "3", "5", "6", "7"];
+      return response.map(this.getTotalOfNestedObjects);
 
-      return num;
     } catch (error) {
       console.error(error);
     }
