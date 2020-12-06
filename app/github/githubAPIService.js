@@ -13,16 +13,14 @@ module.exports = class githubAPIService {
 
     return `https://api.github.com/repos${url.pathname}`;
   }
-
   getPropertyInformation(array, key) {
+    if (array.hasOwnProperty("user")) {
+      return array.map(function (item) {
+        return item["user"][key];
+      });
+    }
     return array.map(function (item) {
       return item[key];
-    });
-  }
-
-  getUserInformation(array, key) {
-    return array.map(function (item) {
-      return item["user"][key];
     });
   }
 
@@ -60,7 +58,7 @@ module.exports = class githubAPIService {
         "commits_url"
       );
 
-      const user = this.getUserInformation(getPullRequestInfo, "login");
+      const user = this.getPropertyInformation(getPullRequestInfo, "login");
 
       let getPullRequestComments, getPullRequestCommmits;
       [getPullRequestComments, getPullRequestCommmits] = await Promise.all([
