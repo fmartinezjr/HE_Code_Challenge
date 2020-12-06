@@ -76,8 +76,8 @@ module.exports = class githubAPIService {
 
       let getPullRequestComments, getPullRequestCommmits;
       [getPullRequestComments, getPullRequestCommmits] = await Promise.all([
-        this.getPullRequestComments(commentsUrls),
-        this.getPullRequestCommmits(commits),
+        this.getPullRequestData(commentsUrls),
+        this.getPullRequestData(commits),
       ]);
 
       return this.formatResponse(
@@ -103,21 +103,6 @@ module.exports = class githubAPIService {
     }
   }
 
-  //api call to get the pull request comments. returns the total number of comments per pull request
-  async getPullRequestComments(url) {
-    try {
-      const response = await axios.all(url.map((l) => axios.get(l))).then(
-        axios.spread((...res) => {
-          return res;
-        })
-      );
-
-      return response.map(this.getTotalOfNestedObjects);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   //the number of nested objects tells us how many commits or comments there were
   getTotalOfNestedObjects = (array) => {
     let numNestedObjects = 0;
@@ -130,8 +115,7 @@ module.exports = class githubAPIService {
     }
   };
 
-  //api call to get the pull request commits. returns the total number of commits per pull request
-  async getPullRequestCommmits(url) {
+  async getPullRequestData(url) {
     try {
       const response = await axios.all(url.map((l) => axios.get(l))).then(
         axios.spread((...res) => {
@@ -144,4 +128,5 @@ module.exports = class githubAPIService {
       console.error(error);
     }
   }
+
 };
