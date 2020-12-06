@@ -2,76 +2,38 @@ const axios = require("axios");
 axios.defaults.headers.common[
   "Authorization"
 ] = `token ${process.env.GIT_TOKEN}`;
+const {
+  getRepoURL,
+  getPropertyInformation,
+  formatResponse,
+  getTotalOfNestedObjects,
+} = require("../utils/utils.js");
 
 module.exports = class githubAPIService {
   constructor(req) {
-    this.url = this.getRepoURL(req.url);
-  }
-
-  getRepoURL(bodyURL) {
-    const url = new URL(bodyURL);
-    return `https://api.github.com/repos${url.pathname}`;
-  }
-
-  getPropertyInformation(array, key) {
-    if (array.hasOwnProperty("user")) {
-      return array.map(function (item) {
-        return item["user"][key];
-      });
-    }
-    return array.map(function (item) {
-      return item[key];
-    });
-  }
-
-  formatResponse(
-    prTitle,
-    commentsUrls,
-    commits,
-    user,
-    numOfComment,
-    numOfCommit
-  ) {
-    const response = {};
-
-    prTitle.forEach((title, i) => {
-      response[title] = {};
-      response[title]["user"] = user[i];
-      response[title]["comments_url"] = commentsUrls[i];
-      response[title]["number_of_comments"] = numOfComment[i];
-      response[title]["commits_url"] = commits[i];
-      response[title]["number_of_commit"] = numOfCommit[i];
-    });
-    return response;
+    this.url = getRepoURL(req.url);
   }
 
   async returnPRInfo() {
     try {
       const getPullRequestInfo = await this.getPullRequestInfo();
-      const prTitle = this.getPropertyInformation(getPullRequestInfo, "title");
-      const commentsUrls = this.getPropertyInformation(
+      const prTitle = getPropertyInformation(getPullRequestInfo, "title");
+      const commentsUrls = getPropertyInformation(
         getPullRequestInfo,
         "comments_url"
       );
-      const commits = this.getPropertyInformation(
-        getPullRequestInfo,
-        "commits_url"
-      );
+      const commits = getPropertyInformation(getPullRequestInfo, "commits_url");
 
-      const user = this.getPropertyInformation(getPullRequestInfo, "login");
+      const user = getPropertyInformation(getPullRequestInfo, "login");
 
       const [pullRequestComments, pullRequestCommits] = await Promise.all([
         this.getPullRequestData(commentsUrls),
         this.getPullRequestData(commits),
       ]);
 
-      const numOfComment = pullRequestComments.map(
-        this.getTotalOfNestedObjects
-      );
-
-      const numOfCommit = pullRequestCommits.map(this.getTotalOfNestedObjects);
-
-      return this.formatResponse(
+      const numOfComment = pullRequestComments.map(getTotalOfNestedObjects);
+      const numOfCommit = pullRequestCommits.map(getTotalOfNestedObjects);
+      return formatResponse(
         prTitle,
         commentsUrls,
         commits,
@@ -93,10 +55,6 @@ module.exports = class githubAPIService {
       console.error(error);
     }
   }
-
-  //Getting the total nested objects tells us how many commits or comments there were
-  getTotalOfNestedObjects = (array) =>
-    typeof array.data === "undefined" ? 0 : array.data.length;
 
   async getPullRequestData(url) {
     try {
