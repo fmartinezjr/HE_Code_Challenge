@@ -4,8 +4,7 @@ const githubAPIService = require("../github/githubAPIService.js");
 
 router.post("/pr", async (req, res, next) => {
   try {
-    const github = new githubAPIService(req.body);
-    const response = await github.returnPRInfo();
+    const response = await githubAPIService.returnPRInfo(req.body.url);
     res.json(response);
   } catch (error) {
     return next(error);
