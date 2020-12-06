@@ -117,7 +117,7 @@ module.exports = class githubAPIService {
 
   async getPullRequestData(url) {
     try {
-      const response = await axios.all(url.map((l) => axios.get(l))).then(
+      const response = await Promise.all(url.map((l) => axios.get(l))).then(
         axios.spread((...res) => {
           return res;
         })
