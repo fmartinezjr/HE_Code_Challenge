@@ -46,7 +46,7 @@ module.exports = class githubAPIService {
     numOfComment,
     numOfCommit
   ) {
-    let response = {};
+    const response = {};
 
     prTitle.forEach((title, i) => {
       response[title] = {};
@@ -61,24 +61,24 @@ module.exports = class githubAPIService {
 
   async returnPRInfo() {
     try {
-      let getPullRequestInfo = await this.getPullRequestInfo();
-      let prTitle = this.getTitle(getPullRequestInfo, "title");
-      let commentsUrls = this.getPropertyInformation(
+      const getPullRequestInfo = await this.getPullRequestInfo();
+      const prTitle = this.getTitle(getPullRequestInfo, "title");
+      const commentsUrls = this.getPropertyInformation(
         getPullRequestInfo,
         "comments_url"
       );
-      let commits = this.getPropertyInformation(
+      const commits = this.getPropertyInformation(
         getPullRequestInfo,
         "commits_url"
       );
 
-      let user = this.getUserInformation(getPullRequestInfo, "login");
+      const user = this.getUserInformation(getPullRequestInfo, "login");
 
-      let getPullRequestComments = await this.getPullRequestComments(
+      const getPullRequestComments = await this.getPullRequestComments(
         commentsUrls
       );
 
-      let getPullRequestCommmits = await this.getPullRequestCommmits(commits);
+      const getPullRequestCommmits = await this.getPullRequestCommmits(commits);
 
       return this.formatResponse(
         prTitle,
