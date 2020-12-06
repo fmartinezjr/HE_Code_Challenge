@@ -10,9 +10,9 @@ module.exports = class githubAPIService {
 
   getRepoURL(bodyURL) {
     const url = new URL(bodyURL);
-
     return `https://api.github.com/repos${url.pathname}`;
   }
+
   getPropertyInformation(array, key) {
     if (array.hasOwnProperty("user")) {
       return array.map(function (item) {
@@ -60,19 +60,24 @@ module.exports = class githubAPIService {
 
       const user = this.getPropertyInformation(getPullRequestInfo, "login");
 
-      let getPullRequestComments, getPullRequestCommmits;
-      [getPullRequestComments, getPullRequestCommmits] = await Promise.all([
+      const [pullRequestComments, pullRequestCommits] = await Promise.all([
         this.getPullRequestData(commentsUrls),
         this.getPullRequestData(commits),
       ]);
+
+      const numOfComment = pullRequestComments.map(
+        this.getTotalOfNestedObjects
+      );
+
+      const numOfCommit = pullRequestCommits.map(this.getTotalOfNestedObjects);
 
       return this.formatResponse(
         prTitle,
         commentsUrls,
         commits,
         user,
-        getPullRequestComments,
-        getPullRequestCommmits
+        numOfComment,
+        numOfCommit
       );
     } catch (error) {
       console.error(error);
@@ -101,7 +106,7 @@ module.exports = class githubAPIService {
         })
       );
 
-      return response.map(this.getTotalOfNestedObjects);
+      return response;
     } catch (error) {
       console.error(error);
     }
