@@ -1,6 +1,6 @@
 const axios = require("axios");
-axios.defaults.headers.common[	
-  "Authorization"	
+axios.defaults.headers.common[
+  "Authorization"
 ] = `token ${process.env.GIT_TOKEN}`;
 
 module.exports = class githubAPIService {
@@ -74,11 +74,11 @@ module.exports = class githubAPIService {
 
       const user = this.getUserInformation(getPullRequestInfo, "login");
 
-      const getPullRequestComments = await this.getPullRequestComments(
-        commentsUrls
-      );
-
-      const getPullRequestCommmits = await this.getPullRequestCommmits(commits);
+      let getPullRequestComments, getPullRequestCommmits;
+      [getPullRequestComments, getPullRequestCommmits] = await Promise.all([
+        this.getPullRequestComments(commentsUrls),
+        this.getPullRequestCommmits(commits),
+      ]);
 
       return this.formatResponse(
         prTitle,
