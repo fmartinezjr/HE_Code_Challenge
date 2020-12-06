@@ -4,7 +4,7 @@ getRepoURL = (bodyURL) => {
 };
 
 getPropertyInformation = (array, key) => {
-  if (array.hasOwnProperty("user")) {
+  if (key == "login") {
     return array.map(function (item) {
       return item["user"][key];
     });

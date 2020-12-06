@@ -14,26 +14,22 @@ async function returnPRInfo(url) {
 
   try {
     const pullRequests = await this.listPullRequests(gitHubRepo);
-    const prTitle = getPropertyInformation(pullRequests, "title");
-    const commentsUrls = getPropertyInformation(
-      pullRequests,
-      "comments_url"
-    );
-    const commits = getPropertyInformation(pullRequests, "commits_url");
-
+    const title = getPropertyInformation(pullRequests, "title");
+    const commentsUrls = getPropertyInformation(pullRequests, "comments_url");
+    const commitsUrls = getPropertyInformation(pullRequests, "commits_url");
     const user = getPropertyInformation(pullRequests, "login");
 
     const [pullRequestComments, pullRequestCommits] = await Promise.all([
       this.getPullRequestData(commentsUrls),
-      this.getPullRequestData(commits),
+      this.getPullRequestData(commitsUrls),
     ]);
 
     const numOfComment = pullRequestComments.map(getTotalOfNestedObjects);
     const numOfCommit = pullRequestCommits.map(getTotalOfNestedObjects);
     return formatResponse(
-      prTitle,
+      title,
       commentsUrls,
-      commits,
+      commitsUrls,
       user,
       numOfComment,
       numOfCommit
