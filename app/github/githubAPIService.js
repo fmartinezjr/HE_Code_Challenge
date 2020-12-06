@@ -97,16 +97,7 @@ module.exports = class githubAPIService {
   }
 
   //Getting the total nested objects tells us how many commits or comments there were
-  getTotalOfNestedObjects = (array) => {
-    let numNestedObjects = 0;
-    if (typeof array.data === "undefined") {
-      return numNestedObjects;
-    } else {
-      numNestedObjects = array.data.length;
-
-      return numNestedObjects;
-    }
-  };
+  getTotalOfNestedObjects = (array) => typeof array.data === "undefined" ? 0 : array.data.length;
 
   async getPullRequestData(url) {
     try {
@@ -121,5 +112,4 @@ module.exports = class githubAPIService {
       console.error(error);
     }
   }
-
 };
