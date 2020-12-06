@@ -19,13 +19,6 @@ module.exports = class githubAPIService {
     });
   }
 
-  //returns the number of properties on each object
-  getTotalCommentsOnEachPr(response) {
-    return response.map(function (response) {
-      return Object.keys(response.data).length;
-    });
-  }
-
   getPropertyInformation(array, key) {
     return array.map(function (item) {
       return item[key];
@@ -103,7 +96,7 @@ module.exports = class githubAPIService {
     }
   }
 
-  //the number of nested objects tells us how many commits or comments there were
+  //Getting the total nested objects tells us how many commits or comments there were
   getTotalOfNestedObjects = (array) => {
     let numNestedObjects = 0;
     if (typeof array.data === "undefined") {
