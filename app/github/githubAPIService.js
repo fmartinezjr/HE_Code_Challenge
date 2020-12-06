@@ -13,15 +13,15 @@ async function returnPRInfo(url) {
   const gitHubRepo = getRepoURL(url);
 
   try {
-    const getPullRequestInfo = await this.getPullRequestInfo(gitHubRepo);
-    const prTitle = getPropertyInformation(getPullRequestInfo, "title");
+    const pullRequests = await this.listPullRequests(gitHubRepo);
+    const prTitle = getPropertyInformation(pullRequests, "title");
     const commentsUrls = getPropertyInformation(
-      getPullRequestInfo,
+      pullRequests,
       "comments_url"
     );
-    const commits = getPropertyInformation(getPullRequestInfo, "commits_url");
+    const commits = getPropertyInformation(pullRequests, "commits_url");
 
-    const user = getPropertyInformation(getPullRequestInfo, "login");
+    const user = getPropertyInformation(pullRequests, "login");
 
     const [pullRequestComments, pullRequestCommits] = await Promise.all([
       this.getPullRequestData(commentsUrls),
@@ -44,7 +44,7 @@ async function returnPRInfo(url) {
 }
 
 //api calls gives us comments_url and commits_url
-async function getPullRequestInfo(url) {
+async function listPullRequests(url) {
   try {
     const response = await axios.get(`${url}/pulls?state=open`);
     return response.data;
@@ -69,6 +69,6 @@ async function getPullRequestData(url) {
 
 module.exports = {
   returnPRInfo,
-  getPullRequestInfo,
+  listPullRequests,
   getPullRequestData,
 };
