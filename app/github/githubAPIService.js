@@ -40,7 +40,7 @@ module.exports = class githubAPIService {
 
   formatResponse(
     prTitle,
-    commentsUrl,
+    commentsUrls,
     commits,
     user,
     numOfComment,
@@ -51,7 +51,7 @@ module.exports = class githubAPIService {
     prTitle.forEach((title, i) => {
       response[title] = {};
       response[title]["user"] = user[i];
-      response[title]["comments_url"] = commentsUrl[i];
+      response[title]["comments_url"] = commentsUrls[i];
       response[title]["number_of_comments"] = numOfComment[i];
       response[title]["commits_url"] = commits[i];
       response[title]["number_of_commit"] = numOfCommit[i];
@@ -63,7 +63,7 @@ module.exports = class githubAPIService {
     try {
       let getPullRequestInfo = await this.getPullRequestInfo();
       let prTitle = this.getTitle(getPullRequestInfo, "title");
-      let commentsUrl = this.getPropertyInformation(
+      let commentsUrls = this.getPropertyInformation(
         getPullRequestInfo,
         "comments_url"
       );
@@ -75,14 +75,14 @@ module.exports = class githubAPIService {
       let user = this.getUserInformation(getPullRequestInfo, "login");
 
       let getPullRequestComments = await this.getPullRequestComments(
-        commentsUrl
+        commentsUrls
       );
 
       let getPullRequestCommmits = await this.getPullRequestCommmits(commits);
 
       return this.formatResponse(
         prTitle,
-        commentsUrl,
+        commentsUrls,
         commits,
         user,
         getPullRequestComments,
