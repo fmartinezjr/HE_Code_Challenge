@@ -13,11 +13,6 @@ module.exports = class githubAPIService {
 
     return `https://api.github.com/repos${url.pathname}`;
   }
-  getTitle(array, key) {
-    return array.map(function (item) {
-      return item[key];
-    });
-  }
 
   getPropertyInformation(array, key) {
     return array.map(function (item) {
@@ -55,7 +50,7 @@ module.exports = class githubAPIService {
   async returnPRInfo() {
     try {
       const getPullRequestInfo = await this.getPullRequestInfo();
-      const prTitle = this.getTitle(getPullRequestInfo, "title");
+      const prTitle = this.getPropertyInformation(getPullRequestInfo, "title");
       const commentsUrls = this.getPropertyInformation(
         getPullRequestInfo,
         "comments_url"
@@ -97,7 +92,8 @@ module.exports = class githubAPIService {
   }
 
   //Getting the total nested objects tells us how many commits or comments there were
-  getTotalOfNestedObjects = (array) => typeof array.data === "undefined" ? 0 : array.data.length;
+  getTotalOfNestedObjects = (array) =>
+    typeof array.data === "undefined" ? 0 : array.data.length;
 
   async getPullRequestData(url) {
     try {
