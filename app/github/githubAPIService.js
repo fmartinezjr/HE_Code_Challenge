@@ -1,4 +1,7 @@
 const axios = require("axios");
+axios.defaults.headers.common[	
+  "Authorization"	
+] = `token ${process.env.GIT_TOKEN}`;
 
 module.exports = class githubAPIService {
   constructor(req) {
