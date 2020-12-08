@@ -36,7 +36,6 @@ describe('getPropertyInformation', () => {
       review_comments_url: 'https://api.github.com/repos/Bacon/BaconQrCode/pulls/73/comments',
       review_comment_url: 'https://api.github.com/repos/Bacon/BaconQrCode/pulls/comments{/number}',
       comments_url: 'https://api.github.com/repos/Bacon/BaconQrCode/issues/73/comments',
-      commits_url: 'https://api.github.com/repos/Bacon/BaconQrCode/pulls/73/commits',
     }
   ]
 
